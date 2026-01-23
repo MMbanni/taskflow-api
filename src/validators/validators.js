@@ -31,10 +31,16 @@ const passwordValidator = [
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    const messages = errors.array().map(e => e.msg);
+    return res.status(400).json({
+      success: false,
+      errors: messages
+    });
   }
   next();
 };
+
+
 module.exports = {
   registerValidator,
   loginValidator,

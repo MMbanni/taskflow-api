@@ -71,7 +71,7 @@ const httpLogin = asyncHandler(async (req, res) => {
 
   const user = await getUserByUsername(username);
   if (!user) {
-    return res.status(404).send({
+    return res.status(404).json({
       success: false,
       errors: ['User does not exist']
     });
@@ -79,7 +79,7 @@ const httpLogin = asyncHandler(async (req, res) => {
 
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
-    return res.status(401).send({
+    return res.status(401).json({
       success: false,
       errors: ['Wrong password']
     });
@@ -89,9 +89,10 @@ const httpLogin = asyncHandler(async (req, res) => {
 
   // Issue new access and refresh tokens
   const accessToken = createAccessToken(user);
-  const refreshToken = await issueRefreshToken(res, user);
 
-  return res.status(200).send({
+  await issueRefreshToken(res, user);
+
+  return res.status(200).json({
     success: true,
     data: safeUser, accessToken
   });
@@ -100,17 +101,7 @@ const httpLogin = asyncHandler(async (req, res) => {
 
 const httpRefreshAccessToken = asyncHandler(async (req, res) => {
 
-  const cookies = req.headers.cookie;
-  if (!cookies) {
-    return res.status(401).json({
-      success: false,
-      errors: ['Invalid headers']
-    });
-  }
-  const refreshToken = cookies
-    .split('; ')
-    .find(c => c.startsWith('refreshToken='))
-    ?.split('=')[1];
+  const refreshToken = req.cookies?.refreshToken;
 
   if (!refreshToken) {
     return res.status(401).json({
@@ -127,8 +118,9 @@ const httpRefreshAccessToken = asyncHandler(async (req, res) => {
       errors: ['Invalid or missing token']
     });
   }
+
   // Expire session & delete token
-  if (tokenLookup.expiresAt.getTime() < new Date()) {
+  if (tokenLookup.expiresAt.getTime() < Date.now()) {
     await deleteRefreshToken(refreshToken);
     return res.status(401).json({
       success: false,
@@ -137,14 +129,21 @@ const httpRefreshAccessToken = asyncHandler(async (req, res) => {
   }
 
   const user = await getUserById(tokenLookup.userId);
+  if (!user) {
+    await deleteRefreshToken(refreshToken);
+    return res.status(401).json({
+      success: false,
+      errors: ["Invalid token"],
+    });
+  }
   const safeUser = getSafeUser(user);
 
   // Delete refresh token after use, issue new refresh and access tokens
   await deleteRefreshToken(refreshToken);
   const accessToken = createAccessToken(user);
-  const newRefreshToken = await issueRefreshToken(res, user);
+  await issueRefreshToken(res, user);
 
-  return res.status(200).send({
+  return res.status(200).json({
     success: true,
     data: safeUser, accessToken
   });
@@ -187,6 +186,9 @@ const httpCheckPasswordResetCode = asyncHandler(async (req, res) => {
   const normalizedEmail = email.toLowerCase();
 
   const userInfo = await getUserByEmail(normalizedEmail);
+  if (!userInfo) {
+    return res.status(404).json({ success: false, errors: ["User not found"] });
+  }
   if (!(Number(resetCode) === userInfo.resetCode)) {
     return res.status(401).json({
       success: false,
@@ -210,6 +212,12 @@ const httpResetPassword = asyncHandler(async (req, res) => {
   const normalizedEmail = email.toLowerCase();
 
   const userInfo = await getUserByEmail(normalizedEmail);
+  if (!userInfo) {
+    return res.status(404).json({
+      success: false,
+      errors: ['User not found']
+    });
+  }
 
 
   if (!(Number(resetCode) === userInfo.resetCode)) {
@@ -243,8 +251,8 @@ const httpResetPassword = asyncHandler(async (req, res) => {
 const httpAdminGetUser = asyncHandler(async (req, res) => {
 
   // Admin privilege check
-  if (!(req.user.role === "admin")) {
-    return res.status(400).json({
+  if (!req.user || (req.user.role !== "admin")) {
+    return res.status(403).json({
       success: false,
       errors: ['Access denied']
     });
@@ -273,7 +281,7 @@ const httpAdminGetUser = asyncHandler(async (req, res) => {
 
 // Random 6 digit code
 function generateCode() {
-  codeArray = [];
+  const codeArray = [];
   for (let i = 0; i < 6; i++) {
     let randomNumber = Math.floor(Math.random() * 10);
     codeArray.push(randomNumber);
@@ -325,7 +333,7 @@ const issueRefreshToken = asyncHandler(async (res, user) => {
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
   await createRefreshToken(user.id, refreshToken, expiresAt);
 
-  res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000 })
+  res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000 })
   return refreshToken;
 })
 

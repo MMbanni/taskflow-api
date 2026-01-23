@@ -20,7 +20,7 @@ async function getUserByEmail(email) {
 
 async function getUserById(id) {
 
-  return await Users.findOne(id);
+  return await Users.findOne({_id:id});
 }
 
 async function getUsers(filter = {}) {

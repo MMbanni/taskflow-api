@@ -1,10 +1,13 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const api = require('./routes/api');
 const { dbCheck } = require('./middleware/dbCheck');
 
 const app = express();
 
 app.use(express.json());
+
+app.unsubscribe(cookieParser());
 app.use(dbCheck);
 app.use(api);
 

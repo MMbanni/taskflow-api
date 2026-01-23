@@ -31,7 +31,7 @@ async function updateTask(userId, taskId, task) {
   if (task.priority) updates.priority = task.priority;
 
   const updatedTask = await Task.findOneAndUpdate(
-    { userId, taskId },
+    { userId, _id: taskId },
     { $set: updates },
     { new: true }
   );
@@ -50,7 +50,7 @@ async function deleteTask(userId, taskId) {
 
 async function incrementPriority(taskId) {
 
-  const task = await Task.findOne({ taskId });
+  const task = await Task.findOne({ _id: taskId });
 
   const priorityOrder = ['low', 'medium', 'high'];
   const currentPriority = priorityOrder.indexOf(task.priority);
@@ -68,7 +68,7 @@ async function incrementPriority(taskId) {
 
 async function decrementPriority(taskId) {
 
-  const task = await Task.findOne({ taskId });
+  const task = await Task.findOne({ _id: taskId });
 
   const priorityOrder = ['low', 'medium', 'high'];
   const currentPriority = priorityOrder.indexOf(task.priority);
