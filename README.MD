@@ -1,79 +1,72 @@
 # TaskFlow API
 
-RESTful API for task management with authentication, authorization, refresh tokens, and password reset.
+A RESTful task management backend built with Node.js, Express, TypeScript, and MongoDB.
 
-This project was built to demonstrate: JWT auth, refresh token rotation, secure cookies, role-based access, and clean controller/model separation.
-
----
-
-## Features
-
-* User registration & login
-* JWT access tokens
-* Refresh tokens (stored in DB, rotated on use)
-* Secure HTTP-only cookies
-* Password reset via email (with expiry)
-* Role-based access control (admin routes)
-* Task CRUD (Create, Read, Update, Delete)
-* Per-user task ownership
-* Priority incrementing
-* Centralized async error handling
+The project demonstrates authentication, refresh token rotation, role-based authorization, and a modular layered architecture designed for maintainability and scalability.
 
 ---
 
-## Tech Stack
+##  Features
 
-* **Node.js**
-* **Express**
-* **MongoDB** 
-* **JWT** 
-* **bcrypt** 
-* **crypto** 
-
----
-
-## Project Structure
-
-```
-src/
-│
-├── controllers/        # HTTP request handlers
-├── models/             # Database logic
-├── routes/             # Express routes
-├── middleware/         # Auth & role checks
-├── validators/         # Validate requests
-├── services/           # Email services
-├── utils/              # Centralized error handling
-├── app.js              # Express app setup
-└── server.js           # App entry point
-```
+- User registration and login
+- JWT authentication (access + refresh tokens)
+- Secure refresh token rotation
+- Password reset flow via email
+- Role-based authorization
+- Task CRUD operations
+- Structured error handling
+- Dockerized development environment
+- MongoDB persistence with volumes
 
 ---
 
-## Authentication Flow
+##  Tech Stack
 
-1. User logs in
-2. Server issues:
-
-   * Short-lived **access token** (JWT)
-   * Long-lived **refresh token** (stored in DB + cookie)
-3. Access token expires → client calls refresh endpoint
-4. Refresh token is:
-
-   * Validated
-   * Deleted
-   * Replaced with a new one (rotation)
-
-This prevents token replay attacks.
+- Node.js
+- Express
+- TypeScript
+- MongoDB (Mongoose)
+- Docker
 
 ---
 
+## 📁 Architecture
 
-## ▶️ Running the Project
+The project follows a layered modular structure:
+
+- **Routes** – API endpoint definitions  
+- **Controllers** – Request handling logic  
+- **Services** – Business logic  
+- **Repositories** – Database interaction  
+- **Middleware** – Authentication, validation, DB checks  
+- **Core Utilities** – Error handling, helpers  
+
+This separation improves maintainability, testability, and scalability.
+
+---
+
+## 🚀 Running Without Docker
+
+1. Install dependencies:
 
 ```bash
 npm install
+```
+
+2. Create a `.env` file based on `.env.example`
+
+3. Start the server:
+
+```bash
 npm run dev
+```
+
+---
+
+## 🐳 Running With Docker
+
+```bash
+docker-compose up --build
 ```
 
 The API will be available at:
@@ -82,60 +75,35 @@ The API will be available at:
 http://localhost:3000
 ```
 
----
-
-## API Overview
-
-### Users
-
-* `POST /users/register`
-* `POST /users/login`
-
-### Password Reset
-
-* `POST /users/auth/reset`
-* `POST /users/auth/reset/validate`
-* `POST /users/auth/reset/password-reset`
-
-### Refresh token
-* `POST /users/auth/refresh`
-
-
-### Tasks (Authenticated)
-
-* `POST /tasks`
-* `GET /tasks`
-* `GET /tasks/:taskId`
-* `PATCH /tasks/:taskId`
-* `DELETE /tasks/:taskId`
-* `PATCH /tasks/:taskId/priority/increment`
-* `PATCH /tasks/:taskId/priority/decrement`
-
-### Admin
-
-* `GET /users`
+Docker runs:
+- A Node.js API container
+- A MongoDB container
+- A persistent MongoDB volume
 
 ---
 
-## Security
+## 🔐 Environment Variables
 
-* Passwords hashed with `bcrypt`
-* JWT secrets stored in `env vars`
-* Refresh tokens stored server-side
-* `HTTP-only` cookies
-* Role-based access checks
-* Input validation
+Required variables:
 
----
+```
+MONGO_URI=
+JWT_SECRET=
+MAIL_USER=
+MAIL_APP_PASS=
+PORT=3000
+```
 
-## Author
-
-**Mohamed Banni**
-
-Student of computing science at Griffith College Dublin
+The application will fail fast if required environment variables are missing.
 
 ---
 
-## 📄 License
+## 🎯 Purpose
 
-MIT
+This project was built to demonstrate backend engineering fundamentals including:
+
+- Secure authentication flows
+- Token lifecycle management
+- Environment-based configuration
+- Containerized development
+- Clean architectural separation

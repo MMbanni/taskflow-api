@@ -1,11 +1,13 @@
 {
   "name": "taskflow",
   "version": "1.0.0",
+  "type": "module",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --watch src/server.js",
-    "try": "node --watch test.js"
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "node --trace-uncaught --loader ts-node/esm src/server.ts"
+
   },
   "keywords": [],
   "author": "",
@@ -21,5 +23,15 @@
     "mongodb": "^7.0.0",
     "mongoose": "^9.0.1",
     "nodemailer": "^7.0.12"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.1.0",
+    "@types/nodemailer": "^7.0.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
