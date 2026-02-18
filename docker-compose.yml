@@ -6,6 +6,8 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/taskflow
     depends_on:
       - mongo
 
