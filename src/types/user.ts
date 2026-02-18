@@ -7,12 +7,16 @@ export interface User {
   username: string;
   email: string;
   role: string;
-  reset?: ResetInfo
 }
 
-export interface UserAuth extends User {
+export interface UserWithPassword extends User {
   password: string;
 }
+
+export interface UserWithReset extends User {
+  reset?: ResetInfo;
+}
+
 
 export interface RegisterBody {
   email: string;

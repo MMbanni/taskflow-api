@@ -6,7 +6,7 @@ function validate (req: Request, res: Response, next: NextFunction){
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const messages = errors.array().map(e => e.msg);
-    throw new ApiError(400, messages)
+    return next(new ApiError(400, messages));
   }
   next();
 };

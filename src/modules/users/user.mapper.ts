@@ -1,4 +1,4 @@
-import { SafeUser, User, UserAuth } from "../../types/user.js";
+import { SafeUser, User, UserWithPassword, UserWithReset } from "../../types/user.js";
 import { UserDoc } from "./user.schema.js";
 
 
@@ -19,12 +19,22 @@ export function mapUserDocToDomain(doc: UserDoc): User {
   };
 }
 
-export function mapUserDocToUserAuth(doc: UserDoc): UserAuth {
+export function mapUserDocToUserWithPassword(doc: UserDoc): UserWithPassword {
   return {
     id: doc._id.toString(),
     email: doc.email,
     username: doc.username,
     role: doc.role,
     password: doc.password
+  };
+}
+
+export function mapUserDocToUserWithReset(doc: UserDoc): UserWithReset {
+  return {
+    id: doc._id.toString(),
+    email: doc.email,
+    username: doc.username,
+    role: doc.role,
+    ...(doc.reset !== undefined && {reset: doc.reset})
   };
 }

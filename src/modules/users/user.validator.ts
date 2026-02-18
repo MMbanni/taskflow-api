@@ -11,16 +11,8 @@ export const registerValidator = [
     .isLength({ min: USERNAME_MIN, max: USERNAME_MAX }).withMessage(`Username must be ${USERNAME_MIN}-${USERNAME_MAX} characters long`),
   body('email')
     .isEmail().withMessage('Valid email is required')
-    .normalizeEmail,
+    .normalizeEmail(),
   body('password')
     .isLength({ min: PASSWORD_MIN, max: PASSWORD_MAX }).withMessage(`Password must be ${PASSWORD_MIN}-${PASSWORD_MAX} characters long`)
 ];
-
-/* export const emailValidator = [
-  body('email')
-    .notEmpty().withMessage('Email is required')
-    .isEmail().withMessage('Valid email is required')
-    .normalizeEmail()
-]; */
-
 

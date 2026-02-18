@@ -40,7 +40,7 @@ const usersSchema = new mongoose.Schema({
 
 
 type ResetInfo = {
-  code: String;
+  code: string;
   expiresAt: Date
 }
 

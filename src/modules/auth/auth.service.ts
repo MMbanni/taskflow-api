@@ -6,7 +6,7 @@ import { verifyExists, verifyTrue } from '../../core/utils/verifyCondition.js';
 import { AuthResult } from '../../types/auth.js';
 import { CheckResetBody, LoginBody, ResetPasswordBody, SendResetCodeBody } from '../../types/user.js';
 import { mapToSafeUser } from '../users/user.mapper.js';
-import { getUserByEmail, getUserById, getUserForAuthByUsername, savePassword, saveResetPasswordCode } from '../users/user.repository.js';
+import { getUserByEmail, getUserById, getUserForAuthByUsername, getUserForResetByEmail, savePassword, saveResetPasswordCode } from '../users/user.repository.js';
 import { deleteAllUserTokens, deleteRefreshToken, findRefreshToken, saveRefreshToken } from './refreshToken.repository.js';
 import { createAccessToken, generateRefreshToken } from './token.service.js';
 import { BCRYPT_SALT_ROUNDS } from '../../config/config.js';
@@ -87,7 +87,7 @@ export async function sendResetPasswordCode(body: SendResetCodeBody): Promise<vo
 export async function checkPasswordResetCode(body: CheckResetBody): Promise<void> {
   const { email, resetCode } = body;
 
-  const userInfo = await getUserByEmail(email);
+  const userInfo = await getUserForResetByEmail(email);
   verifyExists(userInfo, DomainErrors.invalid('Invalid'));
 
   // Verify code is correct and not expired

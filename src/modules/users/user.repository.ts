@@ -1,7 +1,7 @@
-import type { RegisterBody, User, UserAuth, UserFilters } from '../../types/user.js';
+import type { RegisterBody, User, UserFilters, UserWithPassword, UserWithReset } from '../../types/user.js';
 import { UserModel } from './user.schema.js';
 import { DomainError } from '../../core/errors/DomainError.js';
-import { mapUserDocToDomain, mapUserDocToUserAuth } from './user.mapper.js';
+import { mapUserDocToDomain, mapUserDocToUserWithPassword, mapUserDocToUserWithReset,  } from './user.mapper.js';
 
 
 export async function saveUser(userInfo: RegisterBody): Promise<User> {
@@ -28,16 +28,22 @@ export async function getUserByUsername(username: string): Promise<User | null> 
   return doc ? mapUserDocToDomain(doc) : null
 }
 
-export async function getUserForAuthByUsername(username: string): Promise<UserAuth | null> {
+export async function getUserForAuthByUsername(username: string): Promise<UserWithPassword | null> {
   const doc = await UserModel.findOne({
     usernameNormalized: username.toLowerCase()
   });
-  return doc ? mapUserDocToUserAuth(doc) : null
+  return doc ? mapUserDocToUserWithPassword(doc) : null
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
   const doc = await UserModel.findOne({ email });
   return doc ? mapUserDocToDomain(doc) : null;
+}
+
+export async function getUserForResetByEmail(email: string): Promise<UserWithReset | null> {
+  const doc = await UserModel.findOne({email
+  });
+  return doc ? mapUserDocToUserWithReset(doc) : null
 }
 
 export async function getUserById(id: string): Promise<User | null> {
@@ -63,7 +69,7 @@ export async function saveResetPasswordCode(email: string, code: string): Promis
     $set: {
       reset: {
         code,
-        expiresAt: new Date(Date.now() + 2 * 60 * 1000)
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000)
       }
     }
   });
