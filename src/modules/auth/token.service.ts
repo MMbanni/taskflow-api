@@ -1,26 +1,25 @@
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
+import ms from 'ms';
+import { config } from '../../config/config.js';
+import { User } from '../../types/user.js';
 
-import jwt from "jsonwebtoken";
-
-import { config } from "../../config/config.js";
-import type { UserDoc } from "../users/user.schema.js";
-
-export function createAccessToken(user: Pick<UserDoc, '_id' | 'role'>): string {
-    const accessToken = jwt.sign(
-        {
-            id: user._id.toString(),
-            role: user.role,
-        },
-        config.jwtSecret,
-        { expiresIn: '100m' }
-
-    );
-    return accessToken;
+export function createAccessToken(user: Pick<User, 'id' | 'role'>): string {
+  return jwt.sign(
+    {
+      id: user.id,
+      role: user.role,
+    },
+    config.jwtSecret,
+    { expiresIn: config.jwtAccessExpiry }
+  );
 }
 
 export function generateRefreshToken() {
-    const token = crypto.randomBytes(64).toString('hex');
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  const token = crypto.randomBytes(64).toString('hex');
+  const expiresAt = new Date(
+    Date.now() + ms(config.jwtRefreshExpiry)
+  );
 
-    return { token, expiresAt };
+  return { token, expiresAt };
 }

@@ -1,69 +1,94 @@
-import type { RegisterBody, User, UserFilters } from '../../types/user.js';
-import type { UserDoc } from './user.schema.js';
+import type { RegisterBody, User, UserAuth, UserFilters } from '../../types/user.js';
 import { UserModel } from './user.schema.js';
 import { DomainError } from '../../core/errors/DomainError.js';
+import { mapUserDocToDomain, mapUserDocToUserAuth } from './user.mapper.js';
 
 
-export async function saveUser(userInfo: RegisterBody): Promise <UserDoc> {
+export async function saveUser(userInfo: RegisterBody): Promise<User> {
 
   try {
-    const user = await UserModel.create(userInfo);
-    return user;
-    
+    const doc = await UserModel.create({
+      ...userInfo,
+      usernameNormalized: userInfo.username.toLowerCase()
+    });
+    return mapUserDocToDomain(doc);
+
   } catch (err: any) {
     if (err?.code === 11000) {
-      throw new DomainError('ACCOUNT_ALREADY_EXISTS', parseDuplicateError(err,userInfo));
+      throw new DomainError('ACCOUNT_ALREADY_EXISTS', parseDuplicateError(err, userInfo));
     }
     throw err;
   }
 }
 
-export async function getUserByUsername(username: string) : Promise<UserDoc | null> {
-  // Case insensitive
-  return UserModel.findOne({
-    username: { $regex: `^${username}$`, $options: 'i' }
+export async function getUserByUsername(username: string): Promise<User | null> {
+  const doc = await UserModel.findOne({
+    usernameNormalized: username.toLowerCase()
+  });
+  return doc ? mapUserDocToDomain(doc) : null
+}
+
+export async function getUserForAuthByUsername(username: string): Promise<UserAuth | null> {
+  const doc = await UserModel.findOne({
+    usernameNormalized: username.toLowerCase()
+  });
+  return doc ? mapUserDocToUserAuth(doc) : null
+}
+
+export async function getUserByEmail(email: string): Promise<User | null> {
+  const doc = await UserModel.findOne({ email });
+  return doc ? mapUserDocToDomain(doc) : null;
+}
+
+export async function getUserById(id: string): Promise<User | null> {
+  const doc = await UserModel.findById(id);
+  return doc ? mapUserDocToDomain(doc) : null;
+}
+
+export async function getUsers(filters?: UserFilters): Promise<User[]> {
+  const query = {
+    ...(filters?.role !== undefined && { role: filters.role }),
+    ...(filters?.email && { email: filters.email }),
+    ...(filters?.username && { usernameNormalized: filters.username.toLowerCase() })
+  }
+
+  const doc = await UserModel.find(query);
+  return doc.map(mapUserDocToDomain)
+}
+
+
+export async function saveResetPasswordCode(email: string, code: string): Promise<void> {
+
+  await UserModel.findOneAndUpdate({ email }, {
+    $set: {
+      reset: {
+        code,
+        expiresAt: new Date(Date.now() + 2 * 60 * 1000)
+      }
+    }
   });
 }
 
-export async function getUserByEmail(email: string) : Promise<UserDoc | null> {
+export async function savePassword(email: string, resetCode: string, password: string): Promise<boolean> {
 
-  return UserModel.findOne({ email });
-}
-
-export async function getUserById(id: string) : Promise<UserDoc | null> {
-
-  return UserModel.findOne({ _id: id });
-}
-
-export async function getUsers(filters: UserFilters | undefined) : Promise<UserDoc[]> {
-
-  return UserModel.find(filters);
-}
-
-
-export async function saveResetPasswordCode(email: string, code: string) : Promise<void> {
-
-  await UserModel.findOneAndUpdate({ email }, {
-    resetCode: code,
-    resetCodeExpiresAt: new Date(Date.now() + 2 * 60 * 1000)
-  });
-}
-
-export async function savePassword(email: string, password: string) : Promise<void> {
-
-  await UserModel.findOneAndUpdate({ email }, {
+  const result = await UserModel.findOneAndUpdate({
+    email,
+    "reset.code": resetCode,
+    "reset.expiresAt": { $gt: new Date() }
+  }, {
     $set: { password },
     $unset: {
-      resetCode: "",
-      resetCodeExpiresAt: ""
+      reset: ""
     }
   }
   );
+  
+  return !!result;
 }
 
-function parseDuplicateError(err: Error, userInfo: RegisterBody) : string[]{
+function parseDuplicateError(err: Error, userInfo: RegisterBody): string[] {
 
-  const {email, username} = userInfo;
+  const { email, username } = userInfo;
 
   if (err.message.includes("email")) {
     return [`${email} is already registered`];

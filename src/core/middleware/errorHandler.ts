@@ -5,6 +5,7 @@ import { DomainError, DomainErrorCode } from '../errors/DomainError.js';
 const statusMap: Record<DomainErrorCode, number> = {
     ACCOUNT_ALREADY_EXISTS: 409,
     AUTH_FAILURE: 401,
+    INVALID_REQUEST: 400,
     NOT_FOUND: 404
 };
 

@@ -1,6 +1,6 @@
-import type { RefreshToken } from "../../types/auth.js";
-import { RefreshTokenModel } from "./refreshToken.schema.js";
-import type { RefreshTokenDoc } from "./refreshToken.schema.js";
+import type { RefreshToken } from '../../types/auth.js';
+import { RefreshTokenModel } from './refreshToken.schema.js';
+import type { RefreshTokenDoc } from './refreshToken.schema.js';
 
 
 export async function saveRefreshToken(userId: string, refreshToken: Pick<RefreshToken, 'token' | 'expiresAt'>) : Promise<RefreshToken> {
@@ -13,7 +13,7 @@ export async function findRefreshToken(token: string) : Promise<RefreshTokenDoc 
 }
 
 export async function deleteRefreshToken(token: string) : Promise<void> {
-  RefreshTokenModel.deleteOne({ token });
+  await RefreshTokenModel.deleteOne({ token });
 }
 
 export async function deleteAllUserTokens(userId: string) {

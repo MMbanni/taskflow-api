@@ -1,8 +1,8 @@
-import { deleteTaskById, findTaskById, listTasks, saveTask, updateTaskById } from "./task.repository.js";
+import { DomainErrors } from "../../core/errors/DomainError.js";
+import { verifyExists } from "../../core/utils/verifyCondition.js";
 import type { CreateTaskRequestDTO, QueryTaskRequestDTO, TaskOutputDTO, UpdateTaskRequestDTO } from "./task.dto.js";
 import { mapToCreateTaskInput, mapToPopulatedTaskOutput, mapToQueryTaskInput, mapToTaskOutput, mapToUpdateTaskInput } from "./task.mapper.js";
-import { verifyExists } from "../../core/utils/verifyCondition.js";
-import { DomainError, DomainErrors } from "../../core/errors/DomainError.js";
+import { deleteTaskById, findTaskById, listTasks, saveTask, updateTaskById } from "./task.repository.js";
 
 
 // Create task
@@ -20,7 +20,7 @@ export async function createTask(
 export async function getTasks(
   userId: string,
   incomingRequest: QueryTaskRequestDTO
-): Promise<TaskOutputDTO | TaskOutputDTO[]> {
+): Promise<TaskOutputDTO[]> {
 
   const queries = mapToQueryTaskInput(userId, incomingRequest);  
   
@@ -37,7 +37,7 @@ export async function getTaskById(
   const task = await findTaskById( userId, incomingRequest );
   verifyExists(task, DomainErrors.notFound('Task not found'));
 
-  return mapToTaskOutput(task);
+  return mapToPopulatedTaskOutput(task);
 }
 
 export async function updateTask(
@@ -48,10 +48,8 @@ export async function updateTask(
 
   const updates = mapToUpdateTaskInput( userId, taskId, incomingRequest);
   
-  
-
   const updatedTask = await updateTaskById(updates);
-  verifyExists(updatedTask, DomainErrors.notFound('Not found'));
+  verifyExists(updatedTask, DomainErrors.notFound('Task not found'));
 
   return mapToTaskOutput(updatedTask);
 }

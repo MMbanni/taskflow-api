@@ -1,16 +1,15 @@
-import mongoose from "mongoose";
 import type {
-  CreateTaskRequestDTO,
   CreateTaskInputDTO,
-  QueryTaskRequestDTO,
+  CreateTaskRequestDTO,
   QueryTaskInputDTO,
-  UpdateTaskRequestDTO,
+  QueryTaskRequestDTO,
+  TaskOutputDTO,
   UpdateTaskInputDTO,
-  TaskOutputDTO
+  UpdateTaskRequestDTO
 } from "./task.dto.js";
 
-import type { TaskDoc } from "./task.schema.js";
 import type { PopulatedTaskDoc } from "../../types/task.js";
+import type { TaskDoc } from "./task.schema.js";
 
 export function mapToCreateTaskInput(
   userId: string,

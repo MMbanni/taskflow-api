@@ -3,7 +3,7 @@
  * allowed values and derive the union type from it, keeping
  * runtime validation and compile-time typing in sync.
  */
-const DOMAIN_ERROR_CODES = ['ACCOUNT_ALREADY_EXISTS', 'AUTH_FAILURE', 'NOT_FOUND'] as const; // without as const typeof == string[]
+const DOMAIN_ERROR_CODES = ['ACCOUNT_ALREADY_EXISTS', 'AUTH_FAILURE', 'NOT_FOUND', 'INVALID_REQUEST'] as const; // without as const typeof == string[]
 export type DomainErrorCode = typeof DOMAIN_ERROR_CODES[number];
 
 export class DomainError extends Error {
@@ -28,4 +28,7 @@ export const DomainErrors = {
 
   duplicate: (message: string) =>
     new DomainError('ACCOUNT_ALREADY_EXISTS', message),
+
+  invalid: (message: string) =>
+    new DomainError('INVALID_REQUEST', message),
 };

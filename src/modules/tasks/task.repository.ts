@@ -1,8 +1,7 @@
-import { Types } from 'mongoose';
-import { TaskModel } from './task.schema.js';
-import type { TaskDoc } from './task.schema.js';
-import type { CreateTaskInputDTO, QueryTaskInputDTO, UpdateTaskInputDTO } from './task.dto.js';
 import type { PopulatedTaskDoc, PopulatedUser } from '../../types/task.js';
+import type { CreateTaskInputDTO, QueryTaskInputDTO, UpdateTaskInputDTO } from './task.dto.js';
+import type { TaskDoc } from './task.schema.js';
+import { TaskModel } from './task.schema.js';
 
 
 export async function saveTask(data: CreateTaskInputDTO): Promise<TaskDoc> {
@@ -18,12 +17,12 @@ export async function listTasks(queries: QueryTaskInputDTO): Promise<PopulatedTa
     .populate<{ userId: PopulatedUser }>('userId', 'username email');
 }
 
-export async function findTaskById(userId: string, taskId: string): Promise<TaskDoc | null> {
+export async function findTaskById(userId: string, taskId: string): Promise<PopulatedTaskDoc | null> {
   return TaskModel.findOne({
     userId: userId,
     _id: taskId
   })
-    .populate('userId', 'username email');
+    .populate<{ userId: PopulatedUser }>('userId', 'username email');
 }
 
 export async function updateTaskById(data: UpdateTaskInputDTO): Promise<TaskDoc | null> {

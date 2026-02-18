@@ -31,7 +31,7 @@ export const httpGetTasks = asyncHandler<{}, {}, {}, QueryTaskRequestDTO>(async 
 })
 
 // Get task by ID
-export const httpGetTaskById = asyncHandler(async (req, res) => {
+export const httpGetTaskById = asyncHandler<{ taskId: string }>(async (req, res) => {
   const { id: userId } = req.user;
 
   const task = await getTaskById(userId, req.params.taskId);

@@ -1,9 +1,14 @@
-import mongoose from'mongoose';
-import type { HydratedDocument } from'mongoose';
-import type { User } from '../../types/user.js';
+import mongoose from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 const usersSchema = new mongoose.Schema({
 
   username: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+  },
+  usernameNormalized: {
     type: String,
     required: true,
     unique: true,
@@ -25,16 +30,29 @@ const usersSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user'
   },
-  resetCode: {
-    type: Number
+  reset: {
+    code: String,
+    expiresAt: Date
   },
-  resetCodeExpiresAt: {
-    type: Date
-  }
 }, {
   timestamps: true
 });
 
-export type UserDoc = HydratedDocument<User>;
-export const UserModel = mongoose.model<UserDoc>('User', usersSchema);
- 
+
+type ResetInfo = {
+  code: String;
+  expiresAt: Date
+}
+
+export interface UserDb {
+  id: string;
+  username: string;
+  usernameNormalized: string;
+  password: string;
+  email: string;
+  role: string;
+  reset?: ResetInfo
+}
+
+export const UserModel = mongoose.model<UserDb>('User', usersSchema);
+export type UserDoc = HydratedDocument<UserDb>;

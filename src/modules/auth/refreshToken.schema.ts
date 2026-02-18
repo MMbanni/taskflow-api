@@ -1,4 +1,4 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 import type { RefreshToken } from '../../types/auth.js';
 const refreshTokenSchema = new mongoose.Schema({
   userId: {
@@ -8,14 +8,15 @@ const refreshTokenSchema = new mongoose.Schema({
   },
   token: {
     type: String,
-    required: true
+    required: true,
+    index: true
   },
   expiresAt: {
     type: Date,
-    required: true
+    required: true,
+    index: { expires: 0 }
   }
 });
 
-export interface RefreshTokenDoc extends RefreshToken, Document {};
-
 export const RefreshTokenModel = mongoose.model<RefreshToken>('RefreshToken', refreshTokenSchema);
+export type RefreshTokenDoc = HydratedDocument<RefreshToken>

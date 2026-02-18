@@ -1,8 +1,6 @@
 // src/modules/tasks/task.dto.ts
 
-import type mongoose from "mongoose";
-import type { Status, Priority, PopulatedUser } from "../../types/task.js";
-import type { UserDoc } from "../users/user.schema.js";
+import type { PopulatedUser, Priority, Status } from "../../types/task.js";
 
 /* ========== REQUEST DTOs ========== */
 

@@ -1,17 +1,14 @@
-import mongoose from "mongoose";
-import type { ObjectId } from "mongoose";
 import type { JwtPayload } from "jsonwebtoken";
 import type { SafeUser } from "./user.js";
 
 
 export interface AuthPayload extends JwtPayload {
-  id: ObjectId;
+  id: string;
   role: "user" | "admin";
 }
 
-
 export interface RefreshToken {
-  userId: mongoose.Types.ObjectId;
+  userId: string;
   token: string;
   expiresAt: Date;
 };
