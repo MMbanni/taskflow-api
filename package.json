@@ -6,8 +6,9 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "node --trace-uncaught --loader ts-node/esm src/server.ts"
-
+    "dev": "tsx watch --include src src/server.ts",
+    "seed:dev": "tsx src/infrastructure/seed/seedAdmin.ts",
+    "seed:prod": "node dist/infrastructure/seed/seedAdmin.js"
   },
   "keywords": [],
   "author": "",
@@ -32,6 +33,7 @@
     "@types/node": "^25.1.0",
     "@types/nodemailer": "^7.0.9",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }

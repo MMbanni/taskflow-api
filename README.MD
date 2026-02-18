@@ -7,13 +7,36 @@ with refresh token rotation and clear architectural boundaries.
 
 ---
 
-## Project Evolution
+## Quick Start (Docker – Recommended)
 
-This project was originally implemented in JavaScript and later refactored into strict TypeScript to improve type safety, architectural clarity, and long-term maintainability.
+```bash
+git clone <repo-url>
+cd taskflow
+cp .env.example .env
+docker compose up --build
+```
+The API container and MongoDB container will start automatically.
 
-The refactor introduced explicit domain models, stronger separation of concerns (controller → service → repository), and improved validation and error handling boundaries.
+API runs at: http://localhost:3000
 
 ---
+
+## Quick Start (Without Docker)
+Requires MongoDB running locally on port 27017.
+
+```bash
+git clone <repo-url>
+cd taskflow
+cp .env.example .env
+npm install
+npm run dev
+```
+
+API runs at: http://localhost:3000
+
+
+---
+
 
 ## Features
 
@@ -65,53 +88,6 @@ This separation improves maintainability, testability, and scalability.
 
 ---
 
-## Security Considerations
-
-- Refresh tokens stored server-side
-- Token rotation prevents replay attacks
-- Password reset uses expiration window and atomic validation
-- Role-based access enforced at controller layer
-- Environment variables validated at startup
-
----
-
-## Running Without Docker
-
-1. Install dependencies:
-
-```bash
-npm install
-```
-
-2. Create a `.env` file based on `.env.example`
-
-3. Start the server:
-
-```bash
-npm run dev
-```
-
----
-
-## Running With Docker
-
-```bash
-docker-compose up --build
-```
-
-The API will be available at:
-
-```
-http://localhost:3000
-```
-
-Docker runs:
-- A Node.js API container
-- A MongoDB container
-- A persistent MongoDB volume
-
----
-
 ## Environment Variables
 
 Required variables:
@@ -126,7 +102,38 @@ MAIL_APP_PASS=
 PORT=3000
 ```
 
-The application will fail fast if required environment variables are missing.
+The application validates required environment variables at startup and exits immediately if any are missing.
+
+---
+
+## Admin Bootstrap
+
+The application does **not** create a default admin automatically.
+
+An admin user must be created during initial setup.
+
+Add the following variables to your `.env` file:
+
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=password
+
+
+### Local Development
+
+1. Run:
+
+```bash
+npm run seed:dev
+```
+
+
+### Using Docker
+
+1. Run the seed command inside the container:
+
+```bash
+docker compose exec taskflow-api npm run seed:prod
+```
 
 ---
 
