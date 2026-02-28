@@ -1,5 +1,5 @@
 import mongoose, { HydratedDocument } from 'mongoose';
-import type { RefreshToken } from '../../types/auth.js';
+import type { RefreshToken } from '@/types/auth.js';
 const refreshTokenSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,

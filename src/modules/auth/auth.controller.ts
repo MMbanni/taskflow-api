@@ -1,9 +1,9 @@
 import { CookieOptions } from 'express';
-import { ApiErrors } from '../../core/errors/ApiError.js';
-import { asyncHandler } from '../../core/utils/asyncHandler.js';
-import { verifyExists, verifyTrue } from '../../core/utils/verifyCondition.js';
-import { CheckResetBody, LoginBody, ResetPasswordBody, SendResetCodeBody } from '../../types/user.js';
-import { checkPasswordResetCode, loginUser, refreshAccessToken, resetPassword, sendResetPasswordCode } from './auth.service.js';
+import { ApiErrors } from '@/core/errors/ApiError.js';
+import { asyncHandler } from '@/core/utils/asyncHandler.js';
+import { verifyExists, verifyTrue } from '@/core/utils/verifyCondition.js';
+import { CheckResetBody, LoginBody, ResetPasswordBody, SendResetCodeBody } from '@/types/user.js';
+import { checkPasswordResetCode, loginUser, refreshAccessToken, resetPassword, sendResetPasswordCode } from '@/modules/auth/auth.service.js'
 
 
 

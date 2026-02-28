@@ -8,7 +8,9 @@
     "start": "node dist/server.js",
     "dev": "tsx watch --include src src/server.ts",
     "seed:dev": "tsx src/infrastructure/seed/seedAdmin.ts",
-    "seed:prod": "node dist/infrastructure/seed/seedAdmin.js"
+    "seed:prod": "node dist/infrastructure/seed/seedAdmin.js",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +36,7 @@
     "@types/nodemailer": "^7.0.9",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   }
 }

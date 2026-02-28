@@ -1,8 +1,8 @@
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import ms from 'ms';
-import { config } from '../../config/config.js';
-import { User } from '../../types/user.js';
+import { config } from '@/config/config.js';
+import { User } from '@/types/user.js';
 
 export function createAccessToken(user: Pick<User, 'id' | 'role'>): string {
   return jwt.sign(

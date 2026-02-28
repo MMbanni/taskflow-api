@@ -1,7 +1,7 @@
 import { DomainErrors } from "../../core/errors/DomainError.js";
 import { verifyExists } from "../../core/utils/verifyCondition.js";
 import type { CreateTaskRequestDTO, QueryTaskRequestDTO, TaskOutputDTO, UpdateTaskRequestDTO } from "./task.dto.js";
-import { mapToCreateTaskInput, mapToPopulatedTaskOutput, mapToQueryTaskInput, mapToTaskOutput, mapToUpdateTaskInput } from "./task.mapper.js";
+import { mapToCreateTaskInput, mapToQueryTaskInput, mapToUpdateTaskInput } from "./task.mapper.js";
 import { deleteTaskById, findTaskById, listTasks, saveTask, updateTaskById } from "./task.repository.js";
 
 
@@ -14,7 +14,7 @@ export async function createTask(
   const task = mapToCreateTaskInput(userId, incomingRequest);
   const createdTask = await saveTask(task);
   
-  return mapToTaskOutput(createdTask); 
+  return createdTask; 
 }
 
 export async function getTasks(
@@ -26,7 +26,7 @@ export async function getTasks(
   
   const tasks = await listTasks(queries);
 
-  return tasks.map(mapToPopulatedTaskOutput);
+  return tasks;
 }
 
 export async function getTaskById(
@@ -37,7 +37,7 @@ export async function getTaskById(
   const task = await findTaskById( userId, incomingRequest );
   verifyExists(task, DomainErrors.notFound('Task not found'));
 
-  return mapToPopulatedTaskOutput(task);
+  return task;
 }
 
 export async function updateTask(
@@ -51,7 +51,7 @@ export async function updateTask(
   const updatedTask = await updateTaskById(updates);
   verifyExists(updatedTask, DomainErrors.notFound('Task not found'));
 
-  return mapToTaskOutput(updatedTask);
+  return updatedTask;
 }
 
 export async function deleteTask(userId: string, taskId: string) {

@@ -1,8 +1,8 @@
 // Lib
 import express from 'express';
 
-import { loginValidator, resetCodeValidator, resetPasswordValidator } from './auth.validator.js';
-import validate from '../../core/validation/expressValidator.js';
+import { loginValidator, resetCodeValidator, resetPasswordValidator } from '@/modules/auth/auth.validator.js';
+import validate from '@/core/validation/expressValidator.js';
 
 import {
     httpCheckPasswordResetCode,
@@ -10,7 +10,7 @@ import {
     httpRefreshAccessToken,
     httpResetPassword,
     httpSendResetPasswordCode
-} from './auth.controller.js';
+} from '@/modules/auth/auth.controller.js';
 
 const authRouter = express.Router();
 

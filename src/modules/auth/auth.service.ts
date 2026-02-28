@@ -1,17 +1,17 @@
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 
-import { DomainErrors } from '../../core/errors/DomainError.js';
-import { verifyExists, verifyTrue } from '../../core/utils/verifyCondition.js';
-import { AuthResult } from '../../types/auth.js';
-import { CheckResetBody, LoginBody, ResetPasswordBody, SendResetCodeBody } from '../../types/user.js';
-import { mapToSafeUser } from '../users/user.mapper.js';
-import { getUserByEmail, getUserById, getUserForAuthByUsername, getUserForResetByEmail, savePassword, saveResetPasswordCode } from '../users/user.repository.js';
-import { deleteAllUserTokens, deleteRefreshToken, findRefreshToken, saveRefreshToken } from './refreshToken.repository.js';
-import { createAccessToken, generateRefreshToken } from './token.service.js';
-import { BCRYPT_SALT_ROUNDS } from '../../config/config.js';
-import { sendResetPasswordMessage } from '../../infrastructure/mail/email.service.js';
-import { verifyCode } from '../users/user.utils.js';
+import { DomainErrors } from '@/core/errors/DomainError.js';
+import { verifyExists, verifyTrue } from '@/core/utils/verifyCondition.js';
+import { AuthResult } from '@/types/auth.js';
+import { CheckResetBody, LoginBody, ResetPasswordBody, SendResetCodeBody } from '@/types/user.js';
+import { mapToSafeUser } from '@/modules/users/user.mapper.js';
+import { getUserByEmail, getUserById, getUserForAuthByUsername, getUserForResetByEmail, savePassword, saveResetPasswordCode } from '@/modules/users/user.repository.js';
+import { deleteAllUserTokens, deleteRefreshToken, findRefreshToken, saveRefreshToken } from '@/modules/auth/refreshToken.repository.js';
+import { createAccessToken, generateRefreshToken } from '@/modules/auth/token.service.js';
+import { BCRYPT_SALT_ROUNDS } from '@/config/config.js';
+import { sendResetPasswordMessage } from '@/infrastructure/mail/email.service.js';
+import { verifyCode } from '@/modules/users/user.utils.js';
 
 export async function loginUser(body: LoginBody): Promise<AuthResult> {
   const { username, password } = body;
